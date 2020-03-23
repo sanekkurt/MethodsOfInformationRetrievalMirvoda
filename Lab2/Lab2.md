@@ -136,3 +136,35 @@ SELECT to_tsvector('Съешь ещё этих мягких французски
 phraseto_tsquery преобразует неформатированный текст запроса в значение tsquery. Текст разбирается и нормализуется подобно тому как это делает to_tsvector, а затем между оставшимися словами вставляется оператор <-> (предшествует).
 Данная функция полезна при точном поиске последовательностей лексем.
 
+### Задание 5
+ts_debug - выводит информацию обо всех фрагментах данного документа, которые были выданы анализатором и обработаны настроенными словарями.
+Пример использования функции ts_debug
+```sql
+SELECT * FROM ts_debug('Веселый дельфин плещется в море вместе с селёдкой');
+ alias |    description    |  token   |  dictionaries  |  dictionary  |  lexemes
+-------+-------------------+----------+----------------+--------------+-----------
+ word  | Word, all letters | Веселый  | {russian_stem} | russian_stem | {весел}
+ blank | Space symbols     |          | {}             |              |
+ word  | Word, all letters | дельфин  | {russian_stem} | russian_stem | {дельфин}
+ blank | Space symbols     |          | {}             |              |
+ word  | Word, all letters | плещется | {russian_stem} | russian_stem | {плещет}
+ blank | Space symbols     |          | {}             |              |
+ word  | Word, all letters | в        | {russian_stem} | russian_stem | {}
+ blank | Space symbols     |          | {}             |              |
+ word  | Word, all letters | море     | {russian_stem} | russian_stem | {мор}
+ blank | Space symbols     |          | {}             |              |
+ word  | Word, all letters | вместе   | {russian_stem} | russian_stem | {вмест}
+ blank | Space symbols     |          | {}             |              |
+ word  | Word, all letters | с        | {russian_stem} | russian_stem | {}
+ blank | Space symbols     |          | {}             |              |
+ word  | Word, all letters | селёдкой | {russian_stem} | russian_stem | {селедк}
+```
+
+ts_headline - принимает документ вместе с запросом и возвращает выдержку из документа, в которой выделяются слова из запроса. 
+Пример использования функции ts_headline
+```sql
+SELECT ts_headline('Веселый дельфин плещется в море вместе с селёдкой',to_tsquery('дельфин & селёдка'));
+                           ts_headline
+-----------------------------------------------------------------
+ Веселый <b>дельфин</b> плещется в море вместе с <b>селёдкой</b>
+```
